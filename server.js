@@ -1,11 +1,15 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import cors from 'cors';
 
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 
 dotenv.config();
+
+app.use(cors());
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
