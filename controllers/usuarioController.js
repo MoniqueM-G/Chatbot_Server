@@ -1,33 +1,46 @@
 import Usuario from '../models/usuarioModel.js';
 
 export const criarUsuario = async (req, res) => {
-    try {
-        const { nome, email, senha, curso, periodo, telefone } = req.body;
+try {
+const { nome, email, senha, bairro, telefone } = req.body;
 
-        const usuarioExiste = await Usuario.findOne({ email });
-        if (usuarioExiste) {
-            return res.status(400).json({ msg: "Usuário com este email já existe." });
-        }
+const documentoInput = req.body.cnpj || req.body.cpf || "";
+const docLimpo = documentoInput.replace(/[^\d]/g, '');
 
-        const usuario = await Usuario.create({
-            nome,
-            email,
-            senha,
-            curso,
-            periodo,
-            telefone
-        });
+let cpfParaSalvar = "";
+let cnpjParaSalvar = "";
 
-        res.status(201).json({
-            _id: usuario._id,
-            nome: usuario.nome,
-            email: usuario.email
-        });
+if (docLimpo.length === 11) {
+cpfParaSalvar = docLimpo;
+} else if (docLimpo.length > 11) {
+cnpjParaSalvar = docLimpo;
+}
 
-    } catch (error)
-    {
-        res.status(500).json({ msg: "Erro no servidor", error: error.message });
-    }
+const usuarioExiste = await Usuario.findOne({ email });
+if (usuarioExiste) {
+return res.status(400).json({ msg: "Usuário com este email já existe." });
+}
+
+const usuario = await Usuario.create({
+nome,
+email,
+senha,
+bairro,
+cnpj: cnpjParaSalvar,
+cpf: cpfParaSalvar,
+telefone
+ });
+
+ res.status(201).json({
+_id: usuario._id,
+nome: usuario.nome,
+email: usuario.email
+});
+
+} catch (error)
+{
+res.status(500).json({ msg: "Erro no servidor", error: error.message });
+}
 };
 
 export const loginUsuario = async (req, res) => {
@@ -50,32 +63,47 @@ export const loginUsuario = async (req, res) => {
 };
 
 export const atualizarInformacoes = async (req, res) => {
-    try {
-        const usuario = await Usuario.findById(req.params.id);
+  try {
+    const usuario = await Usuario.findById(req.params.id);
 
-        if (!usuario) {
-            return res.status(404).json({ msg: "Usuário não encontrado" });
-        }
-        usuario.nome = req.body.nome || usuario.nome;
-        usuario.email = req.body.email || usuario.email;
-        usuario.curso = req.body.curso || usuario.curso;
-        usuario.periodo = req.body.periodo || usuario.periodo;
-        usuario.telefone = req.body.telefone || usuario.telefone;
-
-        const usuarioAtualizado = await usuario.save();
-
-        res.json({
-            _id: usuarioAtualizado._id,
-            nome: usuarioAtualizado.nome,
-            email: usuarioAtualizado.email,
-            curso: usuarioAtualizado.curso,
-            periodo: usuarioAtualizado.periodo,
-            telefone: usuarioAtualizado.telefone,
-        });
-
-    } catch (error) {
-        res.status(500).json({ msg: "Erro no servidor", error: error.message });
+    if (!usuario) {
+      return res.status(404).json({ msg: "Usuário não encontrado" });
     }
+    usuario.nome = req.body.nome || usuario.nome;
+    usuario.email = req.body.email || usuario.email;
+    usuario.bairro = req.body.bairro || usuario.bairro;
+    usuario.telefone = req.body.telefone || usuario.telefone;
+    const documentoInput = req.body.cnpj;
+    
+    if (documentoInput !== undefined) {
+      const docLimpo = documentoInput.replace(/[^\d]/g, '');
+
+      if (docLimpo.length === 11) {
+        usuario.cpf = docLimpo;
+        usuario.cnpj = "";
+      } else if (docLimpo.length > 11) {
+        usuario.cnpj = docLimpo;
+        usuario.cpf = "";
+      } else {
+        usuario.cnpj = "";
+        usuario.cpf = "";
+      }
+    }
+    const usuarioAtualizado = await usuario.save();
+
+    res.json({
+      _id: usuarioAtualizado._id,
+      nome: usuarioAtualizado.nome,
+      email: usuarioAtualizado.email,
+      bairro: usuarioAtualizado.bairro,
+      cnpj: usuarioAtualizado.cnpj,
+      telefone: usuarioAtualizado.telefone,
+      cpf: usuarioAtualizado.cpf
+    });
+
+  } catch (error) {
+    res.status(500).json({ msg: "Erro no servidor", error: error.message });
+  }
 };
 export const alterarSenha = async (req, res) => {
     try {

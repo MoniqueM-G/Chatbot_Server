@@ -18,18 +18,23 @@ const usuarioSchema = new mongoose.Schema({
         required: [true, 'Senha é obrigatória'],
         minlength: [6, 'Senha deve ter no mínimo 6 caracteres']
     },
-    curso: {
+    bairro: {
         type: String,
         default: ""
     },
-    periodo: {
+    cnpj: {
         type: String,
         default: ""
     },
     telefone: {
         type: String,
         default: ""
+    },
+    cpf: {
+        type: String,
+        default: ""
     }
+
 }, {
     timestamps: true
 });
