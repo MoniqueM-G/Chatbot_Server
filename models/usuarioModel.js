@@ -33,8 +33,14 @@ const usuarioSchema = new mongoose.Schema({
     cpf: {
         type: String,
         default: ""
+    },
+    resetToken: {
+        type: String,
+        default: ""
+    },
+    resetTokenExpires: {
+        type: Date
     }
-
 }, {
     timestamps: true
 });
