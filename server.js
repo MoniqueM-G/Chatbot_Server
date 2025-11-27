@@ -5,6 +5,7 @@ import cors from 'cors';
 
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import iaRoutes from './routes/iaRoutes.js';
 
 dotenv.config();
 
@@ -34,5 +35,7 @@ app.get("/", (req, res) => {
 app.use('/api/usuarios', usuarioRoutes);
 
 app.use('/api/admin', adminRoutes);
+
+app.use('/api/ia', iaRoutes);
 
 app.listen(PORT, () => console.log(`O servidor está rodando na porta http://localhost:${PORT}`));
