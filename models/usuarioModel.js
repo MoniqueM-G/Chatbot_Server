@@ -22,6 +22,10 @@ const usuarioSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    rua: {
+        type: String,
+        default: ""
+    },
     cnpj: {
         type: String,
         default: ""

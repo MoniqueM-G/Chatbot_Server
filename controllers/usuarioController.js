@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import { enviarEmailRecuperacao } from "../service/emailService.js";
 export const criarUsuario = async (req, res) => {
   try {
-    const { nome, email, senha, bairro, telefone } = req.body;
+    const { nome, email, senha, bairro, rua, telefone } = req.body;
 
     const documentoInput = req.body.cnpj || req.body.cpf || "";
     const docLimpo = documentoInput.replace(/[^\d]/g, "");
@@ -28,6 +28,7 @@ export const criarUsuario = async (req, res) => {
       email,
       senha,
       bairro,
+      rua,
       cnpj: cnpjParaSalvar,
       cpf: cpfParaSalvar,
       telefone,
@@ -37,6 +38,8 @@ export const criarUsuario = async (req, res) => {
       _id: usuario._id,
       nome: usuario.nome,
       email: usuario.email,
+      rua: usuario.rua,
+      bairro: usuario.bairro,
     });
   } catch (error) {
     res.status(500).json({ msg: "Erro no servidor", error: error.message });
@@ -72,6 +75,7 @@ export const atualizarInformacoes = async (req, res) => {
     usuario.nome = req.body.nome || usuario.nome;
     usuario.email = req.body.email || usuario.email;
     usuario.bairro = req.body.bairro || usuario.bairro;
+    usuario.rua = req.body.rua || usuario.rua;
     usuario.telefone = req.body.telefone || usuario.telefone;
     const documentoInput = req.body.cnpj;
 
@@ -96,6 +100,7 @@ export const atualizarInformacoes = async (req, res) => {
       nome: usuarioAtualizado.nome,
       email: usuarioAtualizado.email,
       bairro: usuarioAtualizado.bairro,
+      rua: usuarioAtualizado.rua,
       cnpj: usuarioAtualizado.cnpj,
       telefone: usuarioAtualizado.telefone,
       cpf: usuarioAtualizado.cpf,
